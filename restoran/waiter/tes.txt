@@ -1,0 +1,98 @@
+<?php
+	
+	//KONEKSI PHP MYSQL
+	$database="restoran";
+	$host="localhost";
+	$username="root";
+	$password="";
+
+	$conn = mysql_connect ($host,$username,$password) or die ("koneksi gagal");
+	mysql_select_db ($database, $conn);
+
+	if ($_POST["simpan"]) {
+		$id_pesanan=$_POST["id_pesanan"];
+		$id_menu=$_POST["id_menu"];
+		$jenis_kelamin=$_POST["jenis_kelamin"];
+		$no_hp=$_POST["no_hp"];
+		$alamat=$_POST["alamat"];
+
+		$s = mysql_query("UPDATE pelanggan set id_pesanan = '$id_pesanan',id_menu = '$id_menu',jenis_kelamin = '$jenis_kelamin',no_hp = '$no_hp',alamat = '$alamat' where id_pesanan='$id_pesanan'");
+
+		$q = mysql_query($s);
+
+		header("location:list.php");
+
+	}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tambah Pelanggan</title>
+</head>
+<body>
+<table>
+		<?php
+			$s="select * from pesanan where id_pesanan = '".$_GET["id_pesanan"]."'";
+			$q=mysql_query($s, $conn);
+			$l=mysql_fetch_array($q);
+		?>
+<form method="post" action="">	
+	<tr>
+		<td>
+			ID </td><td> : </td><td><input type="text" name="id_pesanan" value="<?= $l['id_pesanan'] ?>" readonly><br>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Nama Menu </td><td> : </td><td>
+						<?php
+
+						echo "<select name='id_menu'>";
+						$e=mysql_query("select p.id_pesanan,m.id_menu, m.nama_menu, pel.id_pelanggan, pel.nama_pelanggan, p.jumlah, l.id_user, l.username from pesanan p, menu m, pelanggan pel, login l where p.id_user = l.id_user and p.id_menu = m.id_menu and p.id_pelanggan = pel.id_pelanggan and p.id_pesanan = '".$_GET["id_pesanan"]."'");
+
+						while($w=mysql_fetch_array($e))
+						{
+						echo "<option value=$w[id_menu] selected>$w[nama_menu]</option>";        
+						}
+						echo "</select>";
+						?><br>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Nama Pelanggan </td><td> : </td><td>
+						<?php
+
+						echo "<select name='id_pelanggan'>";
+						$e=mysql_query("select p.id_pesanan,m.id_menu, m.nama_menu, pel.id_pelanggan, pel.nama_pelanggan, p.jumlah, l.id_user, l.username from pesanan p, menu m, pelanggan pel, login l where p.id_user = l.id_user and p.id_menu = m.id_menu and p.id_pelanggan = pel.id_pelanggan and p.id_pesanan = '".$_GET["id_pesanan"]."'");
+
+						while($w=mysql_fetch_array($e))
+						{
+						echo "<option value=$w[id_pelanggan] selected>$w[nama_pelanggan]</option>";        
+						}
+						echo "</select>";
+						?></br>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Jumlah </td><td> : </td><td><input type="text" name="no_hp" value="<?= $l['jumlah'] ?>"><br>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			User </td><td> : </td><td><input type="text" name="alamat" value="<?= $l['id_user'] ?>"><br>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3"><input type="submit" name="simpan" value="Simpan"></td>
+	</tr>
+</form>
+	<tr>
+		<td>
+			<a href="index.php">Mbalek</a>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
